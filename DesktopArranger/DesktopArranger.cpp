@@ -45,16 +45,24 @@ namespace NsDesktopArranger
 		ReadDesktopSpecification(m_fileSpecification.c_str());
 		std::cout << "Specified desktop configuration requires " << m_newPositions.size() << " items" << std::endl;
 
+		// Read current positions
+		FindIconLocations();
+		std::cout << "Currently there are " << m_currentPositions.size() << " items on desktop" << std::endl;
+
 		// specification requires more items that are currently on desktop
 		// so we need to create fake ones
 		if (m_newPositions.size() > m_currentPositions.size()) 
 		{
 			int numOfMissingItems = m_newPositions.size() - m_currentPositions.size();
 			MakeFakeDesktopItems(numOfMissingItems);
-		}
+			std::cout << "Done creating fakes!" << std::endl;
 
+			std::cout << "Reading current positions ... " << std::endl;
+			FindIconLocations();
+		}
+		std::cout << "Moving items to new positions..." << std::endl;
 		MoveItemsToNewPositions();
-		
+		std::cout << "Done moving items!" << std::endl;
 	}
 
 	PWSTR DesktopArranger::FindDesktopPath()

@@ -81,7 +81,6 @@ int main(int argc, char* argv[])
 
 		if (desktopArranger.Initialize())
 		{
-			desktopArranger.PrintIconLocations();
 			desktopArranger.ArrangeDesktop();
 		}
 		else
