@@ -19,6 +19,8 @@ namespace NsDesktopArranger
 		bool Initialize();
 		void PrintIconLocations();
 		void ArrangeDesktop();
+		bool DisableAutoArrangeAndSnapToGrid();
+		void RestartExplorer();
 
 	private:
 		struct IconPosition
@@ -39,6 +41,8 @@ namespace NsDesktopArranger
 		void ReadDesktopSpecification(const char * file);
 		void MakeFakeDesktopItems(int numOfItems);
 		void MoveItemsToNewPositions();
+		void KillExplorer();
+		void StartExplorer();
 
 		HWND m_desktopHwnd;
 		std::string m_fileSpecification;

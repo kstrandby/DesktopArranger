@@ -9,6 +9,7 @@
 #include <iterator>
 #include <vector>
 #include <atlstr.h>
+#include <tlhelp32.h>
 
 namespace NsDesktopArranger
 {
@@ -98,6 +99,7 @@ namespace NsDesktopArranger
 		PWSTR path = FindDesktopPath();
 
 		int numOfIcons = ListView_GetItemCount(m_desktopHwnd);
+		m_currentPositions.clear();
 
 		// Get process ID of desktop
 		DWORD desktopProcessId = NULL;
@@ -216,4 +218,70 @@ namespace NsDesktopArranger
 		}
 	}
 
+	bool DesktopArranger::DisableAutoArrangeAndSnapToGrid()
+	{
+		std::cout << "Disabling auto arrange and snap to grid" << std::endl;
+		LPCTSTR key = TEXT("SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop");
+		HKEY phkResult;
+		LONG result = RegOpenKeyEx(HKEY_CURRENT_USER, key, 0, KEY_ALL_ACCESS, &phkResult);
+		if (result != ERROR_SUCCESS)
+		{
+			std::cerr << "Failed to open registry key!" << std::endl;
+			return false;
+		}
+		else
+		{
+			DWORD value = 1075839520;
+			result = RegSetValueEx(phkResult, TEXT("FFLAGS"), 0, REG_DWORD, (const BYTE*)&value, sizeof(value));
+			if (result != ERROR_SUCCESS)
+			{
+				std::cerr << "Failed to set registry key!" << std::endl;
+				return false;
+			}
+			RegCloseKey(phkResult);
+		}
+		std::cout << "Auto arrange and snap to grid is now disabled!" << std::endl;
+
+		return true;
+	}
+
+	void DesktopArranger::KillExplorer()
+	{
+		PROCESSENTRY32 entry;
+		entry.dwSize = sizeof(PROCESSENTRY32);
+
+		HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+
+		if (Process32First(snapshot, &entry) == TRUE)
+		{
+			while (Process32Next(snapshot, &entry) == TRUE)
+			{
+				if (_stricmp(entry.szExeFile, "explorer.exe") == 0)
+				{
+					HANDLE explorerHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
+					TerminateProcess(explorerHandle, 0);
+				}
+			}
+		}
+	}
+
+	void DesktopArranger::StartExplorer()
+	{
+		STARTUPINFO si;
+		PROCESS_INFORMATION pi;
+
+		ZeroMemory(&si, sizeof(si));
+
+		si.cb = sizeof(si);
+
+		CreateProcess("explorer.exe", NULL, NULL, NULL, false, NORMAL_PRIORITY_CLASS, NULL, NULL, &si, &pi);
+	}
+
+	void DesktopArranger::RestartExplorer()
+	{
+		std::cout << "Restarting Explorer.exe...." << std::endl;
+		KillExplorer();
+		StartExplorer();
+		std::cout << "Done restarting Explorer.exe!" << std::endl;
+	}
 }

@@ -78,6 +78,15 @@ int main(int argc, char* argv[])
 			}
 		}
 		DesktopArranger desktopArranger(configFileName, fakeFileName);
+		if (!desktopArranger.DisableAutoArrangeAndSnapToGrid())
+		{
+			std::cerr << "Failed to disable auto arrange and snap to grid... Execution will continue but may not succeed." << std::endl;
+		}
+		else
+		{
+			desktopArranger.RestartExplorer();
+			Sleep(3000);
+		}
 
 		if (desktopArranger.Initialize())
 		{
