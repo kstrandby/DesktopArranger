@@ -9,6 +9,6 @@ To run the program:
 
 DesktopArranger.exe [options]
 - where the options are:
-      -h, --help			Shows a help message.
-      -a, --arrange <NameOfFile>	Arranges the desktop according to the pattern specified in the file
-      -f, --fakefile <NameOfFile>	If this option is set, fake files will be named accordingly, if created
+-h, --help			Shows a help message.
+-a, --arrange <NameOfFile>	Arranges the desktop according to the pattern specified in the file
+-f, --fakefile <NameOfFile>	If this option is set, fake files will be named accordingly, if created
